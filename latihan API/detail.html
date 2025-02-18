@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content=
+"width=device-width, initial-scale=1.0"
+>
+  <title>Detail Page</title>
+
+  <!-- Bootstrap 4.1.3 -->
+  <link rel="stylesheet" href=
+"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+>
+
+  <!-- jQuery 3.7.1 -->
+  <script src=
+"https://code.jquery.com/jquery-3.7.1.min.js"
+></script>
+  <style>
+    .detail-container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .character-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
+    .btn-back {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class=
+"container mt-5 detail-container"
+>
+    <h1 class="text-center">Detail Tailed Beast</h1>
+    <div id="tailedBeastDetail" class="card p-3">
+      <img id="characterImage" class="character-image" src="" alt="Character Image">
+      <div class="card-body">
+        <h3 id="characterName" class="card-title text-center"></h3>
+        <p><strong>ID:</strong> <span id="characterId"></span></p>
+        <p><strong>Debut:</strong> <span id="characterDebut"></span></p>
+        <p><strong>Jutsu:</strong> <span id="characterJutsu"></span></p>
+        <p><strong>Nature Type:</strong> <span id="characterNature"></span></p>
+        <p><strong>Occupation:</strong> <span id="characterOccupation"></span></p>
+        <p><strong>Affiliation:</strong> <span id="characterAffiliation"></span></p>
+      </div>
+    </div>
+    <div class="btn-back">
+      <button onclick="history.back()" class="btn btn-secondary">Kembali</button>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function() {
+      const params = new URLSearchParams(window.location.search);
+      const characterId = params.get('id');
+      if (characterId) {
+        $.ajax({
+          type: 'GET',
+          url: `https://narutodb.xyz/api/character/${characterId}`,
+          success: function (data) {
+            $('#characterImage').attr('src', data.images.length ? data.images[0] : 'https://via.placeholder.com/300');
+            $('#characterName').text(data.name);
+            $('#characterId').text(data.id);
+            $('#characterDebut').text(data.debut ? data.debut.anime : 'N/A');
+            $('#characterJutsu').text(data.jutsu ? data.jutsu.join(', ') : 'N/A');
+            $('#characterNature').text(data.natureType ? data.natureType.join(', ') : 'N/A');
+            $('#characterOccupation').text(data.personal.occupation || 'N/A');
+            $('#characterAffiliation').text(data.personal.affiliation ? data.personal.affiliation.join(', ') : 'N/A');
+          },
+          error: function () {
+            $('#tailedBeastDetail').html('<p class="text-danger">Data tidak ditemukan!</p>');
+          }
+        });
+      } else {
+        $('#tailedBeastDetail').html('<p class="text-warning">ID tidak ditemukan di URL!</p>');
+      }
+    });
+  </script>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+</html>
